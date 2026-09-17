@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Edit Activity Level | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input, select { font: inherit; }
+      .profile-page { width: 100%; max-width: 212px; min-height: 457px; margin-inline: auto; padding: 26px 9px 30px; }
+      h1 { margin: 0 0 12px; text-align: center; font-size: 17px; line-height: 20px; font-weight: 700; }
+      .profile-menu { display: grid; gap: 12px; }
+      .profile-card { display: grid; grid-template-columns: 24px minmax(0, 1fr) 12px; align-items: center; gap: 8px; min-height: 44px; padding: 9px 7px 9px 6px; border: 1px solid #ddd; border-radius: 5px; }
+      .card-icon { width: 24px; height: 24px; }
+      .card-label { font-size: 10px; line-height: 14px; font-weight: 700; }
+      .chevron { width: 12px; height: 18px; transform: rotate(180deg); opacity: 0.45; }
+      .activity-dialog { position: fixed; inset: 68px 0 auto; width: min(159px, calc(100% - 24px)); min-height: 293px; max-height: calc(100dvh - 80px); margin: 0 auto; padding: 8px; border: 0; border-radius: 0; background: #fff; color: #111; }
+      .activity-dialog::backdrop { background: rgb(0 0 0 / 11%); }
+      .dialog-header { position: relative; padding-right: 20px; margin-bottom: 12px; }
+      h2 { margin: 0; font-size: 11px; line-height: 12px; font-weight: 700; }
+      .close-button { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+      .close-button img { width: 18px; height: 18px; }
+      .field { margin-bottom: 7px; }
+      .field label { display: block; margin-bottom: 3px; font-size: 9px; line-height: 11px; }
+      .field-input { display: block; width: 108px; height: 21px; padding: 3px 5px; border: 1px solid #ddd; border-radius: 0; background-color: #fcfcfc; color: #111; font-size: 9px; line-height: 13px; }
+      select.field-input { appearance: none; padding-right: 22px; background-image: url('icons/dropdown_menu_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg'); background-repeat: no-repeat; background-position: right 3px center; background-size: 15px; cursor: pointer; }
+      .measurement { position: relative; width: 51px; }
+      .measurement input { width: 100%; padding-right: 19px; appearance: textfield; -moz-appearance: textfield; }
+      .measurement input::-webkit-inner-spin-button, .measurement input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+      .unit { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font-size: 9px; pointer-events: none; }
+      .field-input[aria-invalid="true"] { border-color: #b42318; }
+      .save-button { display: block; width: calc(100% - 8px); min-height: 19px; margin: 17px 4px 0; padding: 3px 5px; border: 0; border-radius: 10px; background: #171717; color: #fff; font-size: 11px; line-height: 13px; font-weight: 700; cursor: pointer; }
+      .status { margin: 9px 0 0; color: #b42318; font-size: 10px; line-height: 14px; }
+      .status:empty { display: none; }
+      :is(input, select, button):focus-visible { outline: 2px solid #222; outline-offset: 2px; }
+      @media (max-width: 480px) { .profile-page { min-height: 100vh; min-height: 100dvh; } }
+      @media (hover: hover) { .close-button:hover { background: #f6f6f6; } .save-button:hover { background: #333; } }
+    </style>
+  </head>
+  <body>
+    <main class="profile-page" inert aria-hidden="true">
+      <h1>My Profile</h1>
+      <div class="profile-menu">
+        <div class="profile-card"><img class="card-icon" src="icons/person_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Personal Information</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+        <div class="profile-card"><img class="card-icon" src="icons/directions_run_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Activity Level</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+        <div class="profile-card"><img class="card-icon" src="icons/fork_spoon_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Dietary Preferences</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+      </div>
+    </main>
+    <dialog class="activity-dialog" aria-labelledby="activity-title">
+      <header class="dialog-header">
+        <h2 id="activity-title">View/Edit<br>Activity Level</h2>
+        <button class="close-button" type="button" aria-label="Close and return to My Profile"><img src="icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></button>
+      </header>
+      <form class="activity-form" novalidate>
+        <div class="field">
+          <label for="activity">Activity level</label>
+          <select class="field-input" id="activity" name="activity" required aria-describedby="activity-status">
+            <option value="sedentary">Sedentary</option><option value="lightly-active">Lightly Active</option><option value="moderately-active">Moderately Active</option><option value="very-active" selected>Very Active</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="goal">Goal</label>
+          <select class="field-input" id="goal" name="goal" required aria-describedby="activity-status">
+            <option value="lose">Lose Weight</option><option value="maintain">Maintain Weight</option><option value="gain">Gain Weight</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="target-weight">Target Weight</label>
+          <div class="measurement">
+            <input class="field-input" id="target-weight" name="targetWeight" type="number" inputmode="decimal" min="0.1" step="any" value="80" required aria-describedby="weight-unit activity-status">
+            <span class="unit" id="weight-unit">kg</span>
+          </div>
+        </div>
+        <button class="save-button" type="submit">Save Changes</button>
+        <p class="status" id="activity-status" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+    <script>
+      const dialog = document.querySelector('.activity-dialog');
+      const form = document.querySelector('.activity-form');
+      const statusMessage = document.querySelector('.status');
+      const { activity, goal, targetWeight } = form.elements;
+      const activities = ['sedentary', 'lightly-active', 'moderately-active', 'very-active'];
+      const goals = ['lose', 'maintain', 'gain'];
+      const returnToProfile = () => { window.location.href = 'my-profile.html'; };
+      try {
+        const savedActivity = localStorage.getItem('caloriehub.activityLevel');
+        const savedGoal = localStorage.getItem('caloriehub.weightGoal');
+        const savedWeight = localStorage.getItem('caloriehub.targetWeightKg');
+        if (activities.includes(savedActivity)) activity.value = savedActivity;
+        if (goals.includes(savedGoal)) goal.value = savedGoal;
+        if (savedWeight !== null && Number.isFinite(Number(savedWeight)) && Number(savedWeight) >= 0.1) targetWeight.value = savedWeight;
+      } catch { statusMessage.textContent = 'Could not load your preferences. Allow browser storage and try again.'; }
+      document.querySelector('.close-button').addEventListener('click', returnToProfile);
+      dialog.addEventListener('cancel', event => { event.preventDefault(); returnToProfile(); });
+      form.addEventListener('input', () => {
+        statusMessage.textContent = '';
+        for (const input of [activity, goal, targetWeight]) input.removeAttribute('aria-invalid');
+      });
+      function showError(input, message) {
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        statusMessage.textContent = message;
+      }
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (!activities.includes(activity.value)) return showError(activity, 'Select an activity level.');
+        if (!goals.includes(goal.value)) return showError(goal, 'Select a goal.');
+        if (!targetWeight.validity.valid || !Number.isFinite(targetWeight.valueAsNumber) || targetWeight.valueAsNumber < 0.1) return showError(targetWeight, 'Enter a target weight of at least 0.1 kg.');
+        const previous = [];
+        try {
+          for (const [key, value] of [['caloriehub.activityLevel', activity.value], ['caloriehub.weightGoal', goal.value], ['caloriehub.targetWeightKg', String(targetWeight.valueAsNumber)]]) {
+            previous.push([key, localStorage.getItem(key)]);
+            localStorage.setItem(key, value);
+          }
+        } catch {
+          for (const [key, value] of previous.reverse()) {
+            try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch { /* Storage may remain unavailable. */ }
+          }
+          statusMessage.textContent = 'Could not save your changes. Allow browser storage and try again.';
+          return;
+        }
+        returnToProfile();
+      });
+      dialog.showModal();
+    </script>
+  </body>
+</html>

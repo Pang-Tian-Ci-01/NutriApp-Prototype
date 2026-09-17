@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Personal Information | CalorieHub</title>
+    <style>
+      :root {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #292929;
+        background: #fff;
+        font-synthesis: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      .personal-page {
+        width: 100%;
+        max-width: 215px;
+        min-height: 465px;
+        margin-inline: auto;
+        padding: 30px 10px 30px 5px;
+      }
+      .page-header {
+        position: relative;
+        min-height: 34px;
+      }
+      .back-button {
+        position: absolute;
+        left: -3px;
+        top: 0;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 32px;
+        border-radius: 6px;
+      }
+      h1 {
+        margin: 0 0 0 38px;
+        font-size: 14px;
+        line-height: 16px;
+        font-weight: 700;
+      }
+      .fields {
+        display: grid;
+        gap: 13px;
+        margin: 11px 11px 0;
+      }
+      .field-row {
+        display: grid;
+        grid-template-columns: 36px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        min-height: 20px;
+      }
+      .field-row > label {
+        font-size: 9px;
+        line-height: 10px;
+      }
+      .field-input {
+        width: 100%;
+        height: 20px;
+        padding: 3px 5px;
+        border: 1px solid #dedede;
+        border-radius: 0;
+        background: #fcfcfc;
+        color: #292929;
+        font-size: 9px;
+        line-height: 12px;
+      }
+      .name-input {
+        max-width: 108px;
+      }
+      .age-input {
+        max-width: 51px;
+        min-width: 0;
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      .age-input::-webkit-inner-spin-button,
+      .age-input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .sex-input {
+        width: 51px;
+        appearance: none;
+        cursor: pointer;
+      }
+      .measurement {
+        position: relative;
+        width: 51px;
+      }
+      .measurement input {
+        padding-right: 20px;
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      .measurement input::-webkit-inner-spin-button,
+      .measurement input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .unit {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 9px;
+        pointer-events: none;
+      }
+      .field-input[aria-invalid="true"] {
+        border-color: #b42318;
+      }
+      .save-button {
+        width: 100%;
+        min-height: 28px;
+        margin-top: 23px;
+        padding: 6px 10px;
+        border: 0;
+        border-radius: 11px;
+        background: #171717;
+        color: #fff;
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .status {
+        margin: 10px 11px 0;
+        color: #b42318;
+        font-size: 11px;
+        line-height: 16px;
+      }
+      .status:empty {
+        display: none;
+      }
+      .status[data-state="success"] {
+        color: #18713c;
+      }
+      :is(input, select, button, a):focus-visible {
+        outline: 2px solid #222;
+        outline-offset: 3px;
+      }
+      @media (max-width: 480px) {
+        .personal-page {
+          min-height: 100vh;
+          min-height: 100dvh;
+          padding-top: max(30px, env(safe-area-inset-top));
+        }
+      }
+      @media (hover: hover) {
+        .back-button:hover {
+          background: #f6f6f6;
+        }
+        .save-button:hover {
+          background: #333;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="personal-page">
+      <header class="page-header">
+        <a
+          class="back-button"
+          href="my-profile.html"
+          aria-label="Back to My Profile"
+        >
+          <img
+            src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"
+            alt=""
+            width="22"
+            height="22"
+          />
+        </a>
+        <h1>View/Edit<br />Personal Information</h1>
+      </header>
+      <form class="personal-form" novalidate>
+        <div class="fields">
+          <div class="field-row">
+            <label for="full-name">Name</label>
+            <input
+              class="field-input name-input"
+              id="full-name"
+              name="fullName"
+              type="text"
+              autocomplete="name"
+              required
+              aria-describedby="personal-status"
+            />
+          </div>
+          <div class="field-row">
+            <label for="age">Age</label>
+            <input
+              class="field-input age-input"
+              id="age"
+              name="age"
+              type="number"
+              inputmode="numeric"
+              min="1"
+              step="1"
+              required
+              aria-describedby="personal-status"
+            />
+          </div>
+          <div class="field-row">
+            <label for="sex">Sex</label>
+            <select
+              class="field-input sex-input"
+              id="sex"
+              name="sex"
+              required
+              aria-describedby="personal-status"
+            >
+              <option value="">Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <label for="height">Height</label>
+            <div class="measurement">
+              <input
+                class="field-input"
+                id="height"
+                name="height"
+                type="number"
+                inputmode="decimal"
+                min="0.1"
+                step="any"
+                placeholder="180"
+                required
+                aria-describedby="height-unit personal-status"
+              />
+              <span class="unit" id="height-unit">cm</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <label for="weight">Current<br />Weight</label>
+            <div class="measurement">
+              <input
+                class="field-input"
+                id="weight"
+                name="weight"
+                type="number"
+                inputmode="decimal"
+                min="0.1"
+                step="any"
+                placeholder="90"
+                required
+                aria-describedby="weight-unit personal-status"
+              />
+              <span class="unit" id="weight-unit">kg</span>
+            </div>
+          </div>
+        </div>
+        <button class="save-button" type="submit">Save Changes</button>
+        <p
+          class="status"
+          id="personal-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector(".personal-form");
+      const statusMessage = document.querySelector(".status");
+      const { fullName, age, sex, height, weight } = form.elements;
+      function parseJSON(value, fallback) {
+        try {
+          return JSON.parse(value) ?? fallback;
+        } catch {
+          return fallback;
+        }
+      }
+      function currentAccount(accounts) {
+        const session = parseJSON(
+          localStorage.getItem("caloriehub.session") ||
+            sessionStorage.getItem("caloriehub.session"),
+          null,
+        );
+        return (
+          accounts.find((account) => account.email === session?.email) ||
+          accounts[accounts.length - 1]
+        );
+      }
+      try {
+        const accounts = parseJSON(
+          localStorage.getItem("caloriehub.accounts"),
+          [],
+        );
+        const account = Array.isArray(accounts)
+          ? currentAccount(accounts)
+          : null;
+        fullName.value =
+          account?.fullName ||
+          localStorage.getItem("caloriehub.fullName") ||
+          "";
+        const savedAge = localStorage.getItem("caloriehub.age");
+        age.value = savedAge !== null && Number.isSafeInteger(Number(savedAge)) && Number(savedAge) >= 1 ? savedAge : "";
+        sex.value = localStorage.getItem("caloriehub.sex") || "";
+        height.value = localStorage.getItem("caloriehub.heightCm") || "";
+        weight.value = localStorage.getItem("caloriehub.currentWeightKg") || "";
+      } catch {
+        statusMessage.textContent =
+          "Could not load your information. Allow browser storage and try again.";
+      }
+      function showError(input, message) {
+        statusMessage.dataset.state = "error";
+        statusMessage.textContent = message;
+        input.setAttribute("aria-invalid", "true");
+        input.focus();
+      }
+      form.addEventListener("input", () => {
+        statusMessage.textContent = "";
+        for (const input of [fullName, age, sex, height, weight])
+          input.removeAttribute("aria-invalid");
+      });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!fullName.value.trim())
+          return showError(fullName, "Enter your name.");
+        if (!age.validity.valid || !Number.isSafeInteger(age.valueAsNumber) || age.valueAsNumber < 1)
+          return showError(
+            age,
+            "Enter your age as a whole number of at least 1.",
+          );
+        if (!["male", "female"].includes(sex.value))
+          return showError(sex, "Select your sex.");
+        for (const [input, label, unit] of [
+          [height, "height", "cm"],
+          [weight, "current weight", "kg"],
+        ]) {
+          if (
+            !input.validity.valid ||
+            !Number.isFinite(input.valueAsNumber) ||
+            input.valueAsNumber < 0.1
+          )
+            return showError(
+              input,
+              "Enter a valid " + label + " of at least 0.1 " + unit + ".",
+            );
+        }
+        const previous = [];
+        try {
+          const name = fullName.value.trim();
+          const updates = [
+            [localStorage, "caloriehub.fullName", name],
+            [localStorage, "caloriehub.age", String(age.valueAsNumber)],
+            [localStorage, "caloriehub.sex", sex.value],
+            [localStorage, "caloriehub.heightCm", String(height.valueAsNumber)],
+            [
+              localStorage,
+              "caloriehub.currentWeightKg",
+              String(weight.valueAsNumber),
+            ],
+          ];
+          const accounts = parseJSON(
+            localStorage.getItem("caloriehub.accounts"),
+            [],
+          );
+          const account = Array.isArray(accounts)
+            ? currentAccount(accounts)
+            : null;
+          if (account) {
+            account.fullName = name;
+            updates.push([
+              localStorage,
+              "caloriehub.accounts",
+              JSON.stringify(accounts),
+            ]);
+            for (const storage of [localStorage, sessionStorage]) {
+              const session = parseJSON(
+                storage.getItem("caloriehub.session"),
+                null,
+              );
+              if (session?.email === account.email)
+                updates.push([
+                  storage,
+                  "caloriehub.session",
+                  JSON.stringify({ ...session, fullName: name }),
+                ]);
+            }
+          }
+          for (const [storage, key, value] of updates) {
+            previous.push([storage, key, storage.getItem(key)]);
+            storage.setItem(key, value);
+          }
+          fullName.value = name;
+          age.value = String(age.valueAsNumber);
+          statusMessage.dataset.state = "success";
+          statusMessage.textContent = "Your changes have been saved.";
+        } catch {
+          for (const [storage, key, value] of previous.reverse()) {
+            try {
+              if (value === null) storage.removeItem(key);
+              else storage.setItem(key, value);
+            } catch {
+              /* Storage may remain unavailable. */
+            }
+          }
+          statusMessage.dataset.state = "error";
+          statusMessage.textContent =
+            "Could not save your changes. Allow browser storage and try again.";
+        }
+      });
+    </script>
+  </body>
+</html>

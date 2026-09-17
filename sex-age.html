@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Sex and age | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      .sex-page { display: flex; flex-direction: column; width: 100%; max-width: 297px; min-height: 652px; margin-inline: auto; padding: 36px 10px 48px 9px; }
+      .page-header { position: relative; display: flex; align-items: center; justify-content: center; height: 42px; flex-shrink: 0; margin-bottom: 24px; }
+      .back-button { position: absolute; left: -13px; display: grid; place-items: center; width: 36px; height: 42px; border-radius: 10px; }
+      .progress { display: flex; gap: 6px; }
+      .progress span { width: 12px; height: 12px; border-radius: 50%; background: #d9d9d9; }
+      .progress .active { background: #080808; }
+      .sex-form { display: flex; flex-direction: column; flex: 1; }
+      h1 { margin: 0; text-align: center; font-size: 18px; line-height: 22px; font-weight: 700; }
+      .description { margin: 6px 25px 0; text-align: center; color: #777; font-size: 12px; line-height: 14px; }
+      .sex-options { display: grid; gap: 6px; min-width: 0; margin: 44px 3px 0; padding: 0; border: 0; }
+      .sex-option { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 47px; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; line-height: 20px; cursor: pointer; }
+      .sex-option:has(input:checked) { background: #f8f8f8; border-color: #999; }
+      .sex-option input { appearance: none; flex-shrink: 0; width: 18px; height: 18px; margin: 0; border: 1px solid #bbb; border-radius: 50%; background: #fff; cursor: pointer; }
+      .sex-option input:checked { background: #666; border-color: #666; box-shadow: inset 0 0 0 2px #fff; }
+      .age-field { margin: 27px 12px 0; }
+      .age-field label { display: block; color: #777; text-align: center; font-size: 12px; line-height: 16px; }
+      .age-input { width: 100%; height: 54px; margin-top: 4px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: #fff; color: #292929; text-align: center; font-size: 18px; line-height: 26px; appearance: textfield; -moz-appearance: textfield; }
+      .age-input::-webkit-inner-spin-button, .age-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+      .age-input[aria-invalid="true"] { border-color: #b42318; }
+      .form-footer { margin-top: auto; padding-top: 32px; }
+      .status { margin: 0 3px 12px; font-size: 12px; line-height: 18px; text-align: center; color: #b42318; }
+      .status:empty { display: none; }
+      .next-button { width: 100%; min-height: 38px; padding: 9px 14px; border: 0; border-radius: 15px; background: #171717; color: #fff; font-size: 15px; line-height: 20px; font-weight: 700; cursor: pointer; }
+      .next-button:disabled { background: #e3e3e3; color: #252525; cursor: default; }
+      :is(input, button, a):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .sex-page { min-height: 100vh; min-height: 100dvh; padding-top: max(36px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+      }
+      @media (hover: hover) {
+        .sex-option:hover, .back-button:hover { background: #f6f6f6; }
+        .next-button:not(:disabled):hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sex-page">
+      <header class="page-header">
+        <a class="back-button" href="weight-goal.html" aria-label="Back to weight goal">
+          <img src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="24" height="24">
+        </a>
+        <div class="progress" role="img" aria-label="Step 3 of 7">
+          <span></span><span></span><span class="active"></span><span></span><span></span><span></span><span></span>
+        </div>
+      </header>
+      <form class="sex-form" novalidate>
+        <h1 id="sex-heading">What best describes you?</h1>
+        <p class="description" id="sex-description">This helps us provide personalised recommendations.</p>
+        <fieldset class="sex-options" aria-labelledby="sex-heading" aria-describedby="sex-description">
+          <label class="sex-option"><span>Male</span><input type="radio" name="sex" value="male" required></label>
+          <label class="sex-option"><span>Female</span><input type="radio" name="sex" value="female"></label>
+        </fieldset>
+        <div class="age-field">
+          <label for="age">Type your age below.</label>
+          <input class="age-input" id="age" name="age" type="number" inputmode="numeric" min="1" step="1" value="23" required aria-describedby="sex-age-status">
+        </div>
+        <footer class="form-footer">
+          <p class="status" id="sex-age-status" role="status" aria-live="polite"></p>
+          <button class="next-button" type="submit">Next</button>
+        </footer>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('.sex-form');
+      const statusMessage = document.querySelector('.status');
+      const storageKey = 'caloriehub.sex';
+      const ageInput = form.elements.age;
+      const ageKey = 'caloriehub.age';
+
+      try {
+        const savedSex = localStorage.getItem(storageKey);
+        const savedOption = Array.from(form.elements.sex).find(option => option.value === savedSex);
+        if (savedOption) savedOption.checked = true;
+        const savedAge = localStorage.getItem(ageKey);
+        if (savedAge !== null && Number.isSafeInteger(Number(savedAge)) && Number(savedAge) >= 1) ageInput.value = savedAge;
+      } catch { /* Selection remains available if browser storage is blocked. */ }
+
+      const clearError = () => {
+        statusMessage.textContent = '';
+        ageInput.removeAttribute('aria-invalid');
+      };
+      form.addEventListener('input', clearError);
+      form.addEventListener('change', clearError);
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const sex = form.elements.sex.value;
+        if (!['male', 'female'].includes(sex)) {
+          statusMessage.textContent = 'Please select an option to continue.';
+          form.elements.sex[0].focus();
+          return;
+        }
+        const age = ageInput.valueAsNumber;
+        if (!ageInput.validity.valid || !Number.isSafeInteger(age) || age < 1) {
+          statusMessage.textContent = 'Enter your age as a whole number of at least 1.';
+          ageInput.setAttribute('aria-invalid', 'true');
+          ageInput.focus();
+          return;
+        }
+        const previous = [];
+        try {
+          for (const [key, value] of [[storageKey, sex], [ageKey, String(age)]]) {
+            previous.push([key, localStorage.getItem(key)]);
+            localStorage.setItem(key, value);
+          }
+        } catch {
+          for (const [key, value] of previous.reverse()) {
+            try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch { /* Storage may remain unavailable. */ }
+          }
+          statusMessage.textContent = 'Could not save your sex and age. Allow browser storage and try again.';
+          return;
+        }
+        window.location.href = 'weight-height.html';
+      });
+    </script>
+  </body>
+</html>

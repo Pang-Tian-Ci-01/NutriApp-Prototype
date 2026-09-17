@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Weight and height | CalorieHub</title>
+    <style>
+      :root {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #202020;
+        background: #fff;
+        font-synthesis: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      .weight-page {
+        width: 100%;
+        max-width: 262px;
+        min-height: 570px;
+        margin-inline: auto;
+        padding: 31px 9px 34px 7px;
+        display: flex;
+        flex-direction: column;
+      }
+      .page-header {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 42px;
+        flex-shrink: 0;
+      }
+      .back-button {
+        position: absolute;
+        left: -13px;
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 42px;
+        border-radius: 12px;
+      }
+      .progress { display: flex; gap: 5px; }
+      .progress span { width: 11px; height: 11px; border-radius: 50%; background: #d9d9d9; }
+      .progress .active { background: #080808; }
+      .weight-form { display: flex; flex-direction: column; flex: 1; }
+      h1 { margin: 9px 0 0; text-align: center; font-size: 16px; line-height: 20px; font-weight: 700; }
+      .weight-group { margin: 26px 11px 0; }
+      .weight-group + .weight-group { margin-top: 17px; }
+      .weight-group + .height-group { margin-top: 34px; }
+      .description { display: block; margin: 0; color: #777; text-align: center; font-size: 11px; line-height: 15px; }
+      .weight-field { position: relative; margin-top: 4px; }
+      .weight-input {
+        width: 100%;
+        height: 47px;
+        padding: 10px 38px;
+        border: 1px solid #d0d0d0;
+        border-radius: 5px;
+        background: #fff;
+        color: #202020;
+        text-align: center;
+        font-size: 16px;
+        line-height: 24px;
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+      .weight-input::-webkit-inner-spin-button,
+      .weight-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+      .unit { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: #777; font-size: 11px; pointer-events: none; }
+      .form-footer { margin-top: auto; padding-top: 32px; }
+      .status { margin: 0 8px 12px; font-size: 12px; line-height: 18px; text-align: center; color: #b42318; }
+      .weight-input[aria-invalid="true"] { border-color: #b42318; }
+      .status:empty { display: none; }
+      .next-button {
+        width: 100%;
+        min-height: 34px;
+        padding: 7px 14px;
+        border: 0;
+        border-radius: 13px;
+        background: #171717;
+        color: #fff;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .next-button:disabled { background: #e3e3e3; color: #252525; cursor: default; }
+      :is(.weight-input, .back-button, .next-button):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .weight-page { min-height: 100vh; min-height: 100dvh; padding-top: max(31px, env(safe-area-inset-top)); padding-bottom: max(34px, env(safe-area-inset-bottom)); }
+      }
+      @media (hover: hover) {
+        .back-button:hover { background: #f6f6f6; }
+        .next-button:not(:disabled):hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="weight-page">
+      <header class="page-header">
+        <a class="back-button" href="sex-age.html" aria-label="Back to sex and age">
+          <img src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="24" height="24">
+        </a>
+        <div class="progress" role="img" aria-label="Step 4 of 7">
+          <span></span><span></span><span></span><span class="active"></span><span></span><span></span><span></span>
+        </div>
+      </header>
+      <form class="weight-form" novalidate>
+        <h1>Enter your weight/height</h1>
+        <div class="weight-group">
+          <label class="description" for="current-weight">Type your current weight below.</label>
+          <div class="weight-field">
+            <input class="weight-input" id="current-weight" name="weight" type="number" inputmode="decimal" min="0.1" step="any" value="90" required aria-describedby="current-weight-unit weight-status">
+            <span class="unit" id="current-weight-unit">kg</span>
+          </div>
+        </div>
+        <div class="weight-group">
+          <label class="description" for="target-weight">Type your target weight below.</label>
+          <div class="weight-field">
+            <input class="weight-input" id="target-weight" name="targetWeight" type="number" inputmode="decimal" min="0.1" step="any" value="70" required aria-describedby="target-weight-unit weight-status">
+            <span class="unit" id="target-weight-unit">kg</span>
+          </div>
+        </div>
+        <div class="weight-group height-group">
+          <label class="description" for="height">Type your height below.</label>
+          <div class="weight-field">
+            <input class="weight-input" id="height" name="height" type="number" inputmode="decimal" min="0.1" step="any" value="170" required aria-describedby="height-unit weight-status">
+            <span class="unit" id="height-unit">cm</span>
+          </div>
+        </div>
+        <footer class="form-footer">
+          <p class="status" id="weight-status" role="status" aria-live="polite"></p>
+          <button class="next-button" type="submit">Next</button>
+        </footer>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('.weight-form');
+      const currentWeight = document.querySelector('#current-weight');
+      const targetWeight = document.querySelector('#target-weight');
+      const height = document.querySelector('#height');
+      const statusMessage = document.querySelector('.status');
+      const weightFields = [
+        { input: currentWeight, key: 'caloriehub.currentWeightKg', label: 'current weight', unit: 'kg' },
+        { input: targetWeight, key: 'caloriehub.targetWeightKg', label: 'target weight', unit: 'kg' },
+        { input: height, key: 'caloriehub.heightCm', label: 'height', unit: 'cm' }
+      ];
+
+      try {
+        for (const { input, key } of weightFields) {
+          const savedWeight = localStorage.getItem(key);
+          if (savedWeight !== null && Number.isFinite(Number(savedWeight)) && Number(savedWeight) >= 0.1) {
+            input.value = savedWeight;
+          }
+        }
+      } catch { /* The form remains usable without browser storage. */ }
+
+      form.addEventListener('input', () => {
+        statusMessage.textContent = '';
+        for (const { input } of weightFields) input.removeAttribute('aria-invalid');
+      });
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        for (const { input, label, unit } of weightFields) {
+          if (!input.validity.valid || !Number.isFinite(input.valueAsNumber) || input.valueAsNumber < 0.1) {
+            input.setAttribute('aria-invalid', 'true');
+            statusMessage.textContent = 'Enter a valid ' + label + ' of at least 0.1 ' + unit + '.';
+            input.focus();
+            return;
+          }
+        }
+        try {
+          for (const { input, key } of weightFields) localStorage.setItem(key, String(input.valueAsNumber));
+        } catch {
+          statusMessage.textContent = 'Could not save your weight and height. Allow browser storage and try again.';
+          return;
+        }
+        form.dispatchEvent(new CustomEvent('weight:continue', { bubbles: true, detail: { weightKg: currentWeight.valueAsNumber, targetWeightKg: targetWeight.valueAsNumber, heightCm: height.valueAsNumber } }));
+        window.location.href = 'activity-level.html';
+      });
+    </script>
+  </body>
+</html>

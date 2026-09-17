@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Allergy | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      .allergy-page { display: flex; flex-direction: column; width: 100%; max-width: 213px; min-height: 465px; margin-inline: auto; padding: 20px 6px 31px; }
+      .page-header { position: relative; display: flex; align-items: center; justify-content: center; height: 40px; flex-shrink: 0; }
+      .back-button { position: absolute; left: -13px; display: grid; place-items: center; width: 36px; height: 40px; border-radius: 10px; }
+      .progress { display: flex; gap: 4px; }
+      .progress span { width: 9px; height: 9px; border-radius: 50%; background: #d9d9d9; }
+      .progress .active { background: #080808; }
+      .allergy-form { display: flex; flex-direction: column; flex: 1; }
+      h1 { margin: 0; text-align: center; font-size: 15px; line-height: 18px; font-weight: 700; }
+      .description { margin: 1px 0 0; color: #858585; text-align: center; font-size: 9px; line-height: 12px; }
+      .allergy-options { display: grid; gap: 8px; min-width: 0; margin: 13px 2px 0 3px; padding: 0; border: 0; }
+      .allergy-option { display: grid; grid-template-columns: 46px minmax(0, 1fr) 14px; align-items: center; gap: 10px; min-height: 58px; padding: 8px; border: 1px solid #dcdcdc; background: #fff; cursor: pointer; }
+      .allergy-name { font-size: 11px; line-height: 14px; font-weight: 700; }
+      .allergy-detail { color: #858585; font-size: 8.5px; line-height: 9.5px; }
+      .allergy-option:has(input:checked) { border-color: #999; background: #f8f8f8; }
+      .allergy-option input { appearance: none; width: 14px; height: 14px; margin: 0; border: 1px solid #b5b5b5; border-radius: 50%; background: #fff; cursor: pointer; }
+      .allergy-option input:checked { background: #666; border-color: #666; box-shadow: inset 0 0 0 2px #fff; }
+      .form-footer { margin-top: auto; padding-top: 32px; }
+      .status { margin: 0 3px 12px; color: #b42318; font-size: 11px; line-height: 16px; text-align: center; }
+      .status:empty { display: none; }
+      .status[data-state="success"] { color: #18713c; }
+      .setup-button { width: 100%; min-height: 28px; padding: 6px 12px; border: 0; border-radius: 11px; background: #171717; color: #fff; font-size: 11px; line-height: 16px; font-weight: 700; cursor: pointer; }
+      .setup-button:disabled { background: #e3e3e3; color: #252525; cursor: default; }
+      :is(input, button, a):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .allergy-page { min-height: 100vh; min-height: 100dvh; padding-top: max(20px, env(safe-area-inset-top)); padding-bottom: max(31px, env(safe-area-inset-bottom)); }
+      }
+      @media (hover: hover) {
+        .allergy-option:hover, .back-button:hover { background: #f6f6f6; }
+        .setup-button:not(:disabled):hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="allergy-page">
+      <header class="page-header">
+        <a class="back-button" href="diet-type.html" aria-label="Back to diet type">
+          <img src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="22" height="22">
+        </a>
+        <div class="progress" role="img" aria-label="Step 7 of 7">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span class="active"></span>
+        </div>
+      </header>
+      <form class="allergy-form">
+        <h1 id="allergy-heading">Allergy</h1>
+        <p class="description" id="allergy-description">This helps us suggest safer meals.</p>
+        <fieldset class="allergy-options" aria-labelledby="allergy-heading" aria-describedby="allergy-description">
+          <label class="allergy-option">
+            <span class="allergy-name" id="dairy-name">Dairy</span>
+            <span class="allergy-detail" id="dairy-detail">Includes milk, cheese, yogurt<br>and other dairy products.</span>
+            <input type="checkbox" name="allergy" value="dairy" aria-labelledby="dairy-name" aria-describedby="dairy-detail">
+          </label>
+          <label class="allergy-option">
+            <span class="allergy-name" id="gluten-name">Gluten</span>
+            <span class="allergy-detail" id="gluten-detail">Found in wheat, barley, rye<br>and related grains.</span>
+            <input type="checkbox" name="allergy" value="gluten" aria-labelledby="gluten-name" aria-describedby="gluten-detail">
+          </label>
+          <label class="allergy-option">
+            <span class="allergy-name" id="nuts-name">Nuts</span>
+            <span class="allergy-detail" id="nuts-detail">Includes peanuts, tree nuts<br>and nut-derived ingredients.</span>
+            <input type="checkbox" name="allergy" value="nuts" aria-labelledby="nuts-name" aria-describedby="nuts-detail">
+          </label>
+          <label class="allergy-option">
+            <span class="allergy-name" id="seafood-name">Seafood</span>
+            <span class="allergy-detail" id="seafood-detail">Includes fish, shellfish and<br>other seafood products.</span>
+            <input type="checkbox" name="allergy" value="seafood" aria-labelledby="seafood-name" aria-describedby="seafood-detail">
+          </label>
+        </fieldset>
+        <footer class="form-footer">
+          <p class="status" role="status" aria-live="polite"></p>
+          <button class="setup-button" type="submit">Setup profile</button>
+        </footer>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('.allergy-form');
+      const options = Array.from(form.elements.allergy);
+      const statusMessage = document.querySelector('.status');
+      const setupButton = document.querySelector('.setup-button');
+      const storageKey = 'caloriehub.allergies';
+
+      try {
+        const savedAllergies = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        if (Array.isArray(savedAllergies)) {
+          for (const option of options) option.checked = savedAllergies.includes(option.value);
+        }
+      } catch { /* Start with no selection if stored data is unavailable. */ }
+
+      form.addEventListener('change', () => {
+        statusMessage.textContent = '';
+        setupButton.disabled = false;
+        setupButton.textContent = 'Setup profile';
+      });
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const allergies = options.filter(option => option.checked).map(option => option.value);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(allergies));
+          localStorage.setItem('caloriehub.onboardingComplete', 'true');
+        } catch {
+          statusMessage.dataset.state = 'error';
+          statusMessage.textContent = 'Could not save your profile. Allow browser storage and try again.';
+          return;
+        }
+        statusMessage.dataset.state = 'success';
+        statusMessage.textContent = 'Your profile is set up. Your preferences have been saved.';
+        setupButton.textContent = 'Profile saved';
+        setupButton.disabled = true;
+        window.location.href = 'my-profile.html';
+      });
+    </script>
+  </body>
+</html>

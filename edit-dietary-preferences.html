@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Edit Dietary Preferences | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input, select { font: inherit; }
+      .profile-page { width: 100%; max-width: 208px; min-height: 460px; margin-inline: auto; padding: 26px 8px 30px; }
+      h1 { margin: 0 0 12px; text-align: center; font-size: 17px; line-height: 20px; font-weight: 700; }
+      .profile-menu { display: grid; gap: 12px; }
+      .profile-card { display: grid; grid-template-columns: 24px minmax(0, 1fr) 12px; align-items: center; gap: 8px; min-height: 44px; padding: 9px 7px 9px 6px; border: 1px solid #ddd; border-radius: 5px; }
+      .card-icon { width: 24px; height: 24px; }
+      .card-label { font-size: 10px; line-height: 14px; font-weight: 700; }
+      .chevron { width: 12px; height: 18px; transform: rotate(180deg); opacity: 0.45; }
+      .dietary-dialog { position: fixed; inset: 68px 0 auto; width: min(159px, calc(100% - 24px)); min-height: 293px; max-height: calc(100dvh - 80px); margin: 0 auto; padding: 8px; border: 0; border-radius: 0; background: #fff; color: #111; }
+      .dietary-dialog::backdrop { background: rgb(0 0 0 / 11%); }
+      .dialog-header { position: relative; padding-right: 18px; margin-bottom: 9px; }
+      h2 { margin: 0; font-size: 11px; line-height: 12px; font-weight: 700; }
+      .close-button { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+      .close-button img { width: 18px; height: 18px; }
+      .field { margin-bottom: 7px; }
+      .field-label { display: block; margin-bottom: 3px; font-size: 9px; line-height: 11px; }
+      .field-input { display: block; width: 108px; height: 21px; padding: 3px 22px 3px 5px; border: 1px solid #ddd; border-radius: 0; background: #fcfcfc url('icons/dropdown_menu_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg') no-repeat right 3px center / 15px; color: #111; font-size: 9px; line-height: 13px; appearance: none; cursor: pointer; }
+      .allergy-picker { position: relative; width: 108px; }
+      .allergy-picker summary { list-style: none; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .allergy-picker summary::-webkit-details-marker { display: none; }
+      .allergy-menu { position: absolute; z-index: 1; top: 24px; left: 0; width: 135px; padding: 6px; border: 1px solid #ccc; background: #fff; box-shadow: 0 3px 8px rgb(0 0 0 / 12%); }
+      .allergy-choice { display: flex; align-items: center; gap: 6px; padding: 5px 0; font-size: 10px; line-height: 14px; cursor: pointer; }
+      .allergy-choice input { width: 13px; height: 13px; margin: 0; accent-color: #292929; }
+      .allergy-hint { margin: 4px 0 0; color: #777; font-size: 9px; line-height: 12px; }
+      .save-button { display: block; width: calc(100% - 8px); min-height: 19px; margin: 12px 4px 0; padding: 3px 5px; border: 0; border-radius: 10px; background: #171717; color: #fff; font-size: 11px; line-height: 13px; font-weight: 700; cursor: pointer; }
+      .status { margin: 9px 0 0; color: #b42318; font-size: 10px; line-height: 14px; }
+      .status:empty { display: none; }
+      :is(input, select, summary, button):focus-visible { outline: 2px solid #222; outline-offset: 2px; }
+      @media (max-width: 480px) { .profile-page { min-height: 100vh; min-height: 100dvh; } }
+      @media (hover: hover) { .close-button:hover { background: #f6f6f6; } .save-button:hover { background: #333; } }
+    </style>
+  </head>
+  <body>
+    <main class="profile-page" inert aria-hidden="true">
+      <h1>My Profile</h1>
+      <div class="profile-menu">
+        <div class="profile-card"><img class="card-icon" src="icons/person_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Personal Information</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+        <div class="profile-card"><img class="card-icon" src="icons/directions_run_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Activity Level</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+        <div class="profile-card"><img class="card-icon" src="icons/fork_spoon_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""><span class="card-label">Dietary Preferences</span><img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></div>
+      </div>
+    </main>
+    <dialog class="dietary-dialog" aria-labelledby="dietary-title">
+      <header class="dialog-header">
+        <h2 id="dietary-title">View/Edit<br>Dietary Preferences</h2>
+        <button class="close-button" type="button" aria-label="Close and return to My Profile"><img src="icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt=""></button>
+      </header>
+      <form class="dietary-form" novalidate>
+        <div class="field">
+          <label class="field-label" for="diet">Diet Type</label>
+          <select class="field-input" id="diet" name="diet" required aria-describedby="dietary-status">
+            <option value="balanced">Balanced</option><option value="low-carb">Low Carb</option><option value="high-protein">High Protein</option><option value="vegetarian">Vegetarian</option><option value="keto">Keto</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label" id="allergy-label">Allergy</span>
+          <details class="allergy-picker">
+            <summary class="field-input" aria-labelledby="allergy-label allergy-summary"><span id="allergy-summary">None</span></summary>
+            <div class="allergy-menu" role="group" aria-labelledby="allergy-label">
+              <label class="allergy-choice"><input type="checkbox" name="allergy" value="dairy">Dairy</label>
+              <label class="allergy-choice"><input type="checkbox" name="allergy" value="gluten">Gluten</label>
+              <label class="allergy-choice"><input type="checkbox" name="allergy" value="nuts">Nuts</label>
+              <label class="allergy-choice"><input type="checkbox" name="allergy" value="seafood">Seafood</label>
+              <p class="allergy-hint">Select all that apply. Leave unchecked for none.</p>
+            </div>
+          </details>
+        </div>
+        <button class="save-button" type="submit">Save Changes</button>
+        <p class="status" id="dietary-status" role="status" aria-live="polite"></p>
+      </form>
+    </dialog>
+    <script>
+      const dialog = document.querySelector('.dietary-dialog');
+      const form = document.querySelector('.dietary-form');
+      const statusMessage = document.querySelector('.status');
+      const picker = document.querySelector('.allergy-picker');
+      const summary = document.querySelector('#allergy-summary');
+      const diet = form.elements.diet;
+      const allergies = Array.from(form.elements.allergy);
+      const dietValues = ['balanced', 'low-carb', 'high-protein', 'vegetarian', 'keto'];
+      const allergyLabels = { dairy: 'Dairy', gluten: 'Gluten', nuts: 'Nuts', seafood: 'Seafood' };
+      const returnToProfile = () => { window.location.href = 'my-profile.html'; };
+      function updateSummary() {
+        const selected = allergies.filter(option => option.checked).map(option => allergyLabels[option.value]);
+        summary.textContent = selected.join(', ') || 'None';
+        picker.querySelector('summary').title = summary.textContent;
+      }
+      try {
+        const savedDiet = localStorage.getItem('caloriehub.diet');
+        if (dietValues.includes(savedDiet)) diet.value = savedDiet;
+        const savedAllergies = JSON.parse(localStorage.getItem('caloriehub.allergies') || '[]');
+        if (Array.isArray(savedAllergies)) for (const option of allergies) option.checked = savedAllergies.includes(option.value);
+      } catch { statusMessage.textContent = 'Could not load your preferences. Allow browser storage and try again.'; }
+      updateSummary();
+      document.querySelector('.close-button').addEventListener('click', returnToProfile);
+      dialog.addEventListener('cancel', event => {
+        event.preventDefault();
+        if (picker.open) picker.open = false;
+        else returnToProfile();
+      });
+      dialog.addEventListener('click', event => { if (!picker.contains(event.target)) picker.open = false; });
+      form.addEventListener('change', () => { statusMessage.textContent = ''; updateSummary(); });
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        picker.open = false;
+        if (!dietValues.includes(diet.value)) {
+          statusMessage.textContent = 'Select a diet type.';
+          diet.focus();
+          return;
+        }
+        const selected = allergies.filter(option => option.checked).map(option => option.value);
+        const previous = [];
+        try {
+          for (const [key, value] of [['caloriehub.diet', diet.value], ['caloriehub.allergies', JSON.stringify(selected)]]) {
+            previous.push([key, localStorage.getItem(key)]);
+            localStorage.setItem(key, value);
+          }
+        } catch {
+          for (const [key, value] of previous.reverse()) {
+            try { if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value); } catch { /* Storage may remain unavailable. */ }
+          }
+          statusMessage.textContent = 'Could not save your changes. Allow browser storage and try again.';
+          return;
+        }
+        returnToProfile();
+      });
+      dialog.showModal();
+    </script>
+  </body>
+</html>

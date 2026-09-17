@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Activity level | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      .activity-page { display: flex; flex-direction: column; width: 100%; max-width: 215px; min-height: 465px; margin-inline: auto; padding: 21px 8px 32px 7px; }
+      .page-header { position: relative; display: flex; align-items: center; justify-content: center; height: 42px; flex-shrink: 0; }
+      .back-button { position: absolute; left: -13px; display: grid; place-items: center; width: 36px; height: 42px; border-radius: 10px; }
+      .progress { display: flex; gap: 4px; }
+      .progress span { width: 9px; height: 9px; border-radius: 50%; background: #d9d9d9; }
+      .progress .active { background: #080808; }
+      .activity-form { display: flex; flex-direction: column; flex: 1; }
+      h1 { margin: 0; text-align: center; font-size: 13px; line-height: 16px; font-weight: 700; }
+      .description { margin: 4px 0 0; color: #858585; text-align: center; font-size: 9px; line-height: 13px; }
+      .activity-options { display: grid; gap: 8px; min-width: 0; margin: 13px 3px 0; padding: 0; border: 0; }
+      .activity-option { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 29px; padding: 6px 12px 6px 10px; border: 1px solid #ededed; background: #fcfcfc; font-size: 11px; line-height: 15px; font-weight: 700; cursor: pointer; }
+      .activity-option:has(input:checked) { background: #f0f0f0; border-color: #999; }
+      .activity-option input { appearance: none; flex-shrink: 0; width: 14px; height: 14px; margin: 0; border: 1px solid #999; border-radius: 50%; background: #fff; cursor: pointer; }
+      .activity-option input:checked { background: #666; border-color: #666; box-shadow: inset 0 0 0 2px #fff; }
+      .form-footer { margin-top: auto; padding-top: 32px; }
+      .status { margin: 0 3px 12px; color: #b42318; font-size: 11px; line-height: 16px; text-align: center; }
+      .status:empty { display: none; }
+      .next-button { width: 100%; min-height: 28px; padding: 6px 12px; border: 0; border-radius: 11px; background: #171717; color: #fff; font-size: 11px; line-height: 16px; font-weight: 700; cursor: pointer; }
+      .next-button:disabled { background: #e3e3e3; color: #252525; cursor: default; }
+      :is(input, button, a):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .activity-page { min-height: 100vh; min-height: 100dvh; padding-top: max(21px, env(safe-area-inset-top)); padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+      }
+      @media (hover: hover) {
+        .activity-option:hover, .back-button:hover { background: #f6f6f6; }
+        .next-button:not(:disabled):hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="activity-page">
+      <header class="page-header">
+        <a class="back-button" href="weight-height.html" aria-label="Back to weight and height">
+          <img src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="22" height="22">
+        </a>
+        <div class="progress" role="img" aria-label="Step 5 of 7">
+          <span></span><span></span><span></span><span></span><span class="active"></span><span></span><span></span>
+        </div>
+      </header>
+      <form class="activity-form" novalidate>
+        <h1 id="activity-heading">Choose your activity level</h1>
+        <p class="description" id="activity-description">This helps us calculate your daily calorie needs.</p>
+        <fieldset class="activity-options" aria-labelledby="activity-heading" aria-describedby="activity-description activity-status">
+          <label class="activity-option"><span>Sedentary</span><input type="radio" name="activity" value="sedentary" required></label>
+          <label class="activity-option"><span>Lightly Active</span><input type="radio" name="activity" value="lightly-active"></label>
+          <label class="activity-option"><span>Moderately Active</span><input type="radio" name="activity" value="moderately-active"></label>
+          <label class="activity-option"><span>Very Active</span><input type="radio" name="activity" value="very-active"></label>
+        </fieldset>
+        <footer class="form-footer">
+          <p class="status" id="activity-status" role="status" aria-live="polite"></p>
+          <button class="next-button" type="submit">Next</button>
+        </footer>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('.activity-form');
+      const statusMessage = document.querySelector('.status');
+      const storageKey = 'caloriehub.activityLevel';
+
+      try {
+        const savedActivity = localStorage.getItem(storageKey);
+        const savedOption = Array.from(form.elements.activity).find(option => option.value === savedActivity);
+        if (savedOption) savedOption.checked = true;
+      } catch { /* The user can still select an option if storage is unavailable. */ }
+
+      form.addEventListener('change', () => { statusMessage.textContent = ''; });
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const activityLevel = form.elements.activity.value;
+        if (!activityLevel) {
+          statusMessage.textContent = 'Please select an activity level to continue.';
+          form.elements.activity[0].focus();
+          return;
+        }
+        try {
+          localStorage.setItem(storageKey, activityLevel);
+        } catch {
+          statusMessage.textContent = 'Could not save your selection. Allow browser storage and try again.';
+          return;
+        }
+        window.location.href = 'diet-type.html';
+      });
+    </script>
+  </body>
+</html>

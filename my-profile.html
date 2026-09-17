@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>My Profile | CalorieHub</title>
+    <style>
+      :root { font-family: Arial, Helvetica, sans-serif; color: #292929; background: #fff; font-synthesis: none; -webkit-tap-highlight-color: transparent; }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, a { font: inherit; }
+      .profile-page { width: 100%; max-width: 212px; min-height: 458px; margin-inline: auto; padding: 29px 9px 30px 10px; }
+      h1 { margin: 0 0 12px; font-size: 17px; line-height: 20px; text-align: center; font-weight: 700; }
+      .profile-menu { display: grid; gap: 12px; }
+      .profile-card { display: grid; grid-template-columns: 24px minmax(0, 1fr) 12px; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 9px 7px 9px 6px; border: 1px solid #ddd; border-radius: 5px; background: #fff; color: #292929; text-align: left; cursor: pointer; }
+      .card-icon { width: 24px; height: 24px; }
+      a.profile-card { text-decoration: none; }
+      .card-label { font-size: 10px; line-height: 14px; font-weight: 700; }
+      .chevron { width: 12px; height: 18px; transform: rotate(180deg); opacity: 0.45; }
+      .profile-dialog { width: min(340px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 20px; border: 1px solid #ddd; border-radius: 12px; color: #292929; }
+      .profile-dialog::backdrop { background: rgb(0 0 0 / 25%); }
+      .dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      h2 { margin: 0; font-size: 17px; line-height: 24px; }
+      .close-button { display: grid; place-items: center; width: 32px; height: 32px; padding: 4px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
+      .close-button img { width: 20px; height: 20px; }
+      dl { margin: 16px 0 20px; }
+      .detail-row { padding: 10px 0; border-bottom: 1px solid #eee; }
+      dt { margin-bottom: 4px; color: #777; font-size: 11px; line-height: 16px; }
+      dd { margin: 0; overflow-wrap: anywhere; font-size: 13px; line-height: 19px; }
+      .edit-link { display: block; padding: 9px 12px; border-radius: 10px; background: #171717; color: #fff; text-align: center; text-decoration: none; font-size: 12px; font-weight: 700; }
+      :is(button, a):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .profile-page { min-height: 100vh; min-height: 100dvh; padding-top: max(29px, env(safe-area-inset-top)); }
+      }
+      @media (hover: hover) {
+        .profile-card:hover, .close-button:hover { background: #f6f6f6; }
+        .edit-link:hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="profile-page">
+      <h1>My Profile</h1>
+      <nav class="profile-menu" aria-label="Profile settings">
+        <a class="profile-card" href="personal-information.html">
+          <img class="card-icon" src="icons/person_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+          <span class="card-label">Personal Information</span>
+          <img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+        </a>
+        <a class="profile-card" href="edit-activity-level.html">
+          <img class="card-icon" src="icons/directions_run_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+          <span class="card-label">Activity Level</span>
+          <img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+        </a>
+        <a class="profile-card" href="edit-dietary-preferences.html">
+          <img class="card-icon" src="icons/fork_spoon_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+          <span class="card-label">Dietary Preferences</span>
+          <img class="chevron" src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+        </a>
+      </nav>
+    </main>
+    <dialog class="profile-dialog" id="profile-details" aria-labelledby="details-title">
+      <div class="dialog-header">
+        <h2 id="details-title"></h2>
+        <button class="close-button" type="button" aria-label="Close profile details">
+          <img src="icons/close_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="">
+        </button>
+      </div>
+      <dl class="details-list"></dl>
+      <a class="edit-link" href="weight-goal.html">Edit preferences</a>
+    </dialog>
+    <script>
+      const dialog = document.querySelector('.profile-dialog');
+      const title = document.querySelector('#details-title');
+      const details = document.querySelector('.details-list');
+      const editLink = document.querySelector('.edit-link');
+      const labels = {
+        lose: 'Lose weight', maintain: 'Maintain weight', gain: 'Gain weight',
+        male: 'Male', female: 'Female', sedentary: 'Sedentary',
+        'lightly-active': 'Lightly Active', 'moderately-active': 'Moderately Active', 'very-active': 'Very Active',
+        balanced: 'Balanced', 'low-carb': 'Low Carb', 'high-protein': 'High Protein', vegetarian: 'Vegetarian', keto: 'Keto',
+        dairy: 'Dairy', gluten: 'Gluten', nuts: 'Nuts', seafood: 'Seafood'
+      };
+      function read(key) {
+        try { return localStorage.getItem('caloriehub.' + key); }
+        catch { return null; }
+      }
+      function parse(value, fallback) {
+        try { return JSON.parse(value) ?? fallback; }
+        catch { return fallback; }
+      }
+      function display(value) { return labels[value] || 'Not set'; }
+      function weight(value) { return value && Number.isFinite(Number(value)) && Number(value) > 0 ? value + ' kg' : 'Not set'; }
+      function profileSections() {
+        let session = read('session');
+        try { session ||= sessionStorage.getItem('caloriehub.session'); } catch { /* Session storage is optional. */ }
+        const accounts = parse(read('accounts'), []);
+        const account = parse(session, null) || (Array.isArray(accounts) ? accounts[accounts.length - 1] : null) || {};
+        const savedAllergies = parse(read('allergies'), null);
+        const allergies = Array.isArray(savedAllergies) ? savedAllergies.filter(value => ['dairy', 'gluten', 'nuts', 'seafood'].includes(value)).map(display).join(', ') || 'None selected' : 'Not set';
+        return {
+          personal: { title: 'Personal Information', href: 'weight-goal.html', edit: 'Edit personal preferences', rows: [
+            ['Full name', account.fullName || 'Not set'], ['Email', account.email || 'Not set'],
+            ['Weight goal', display(read('weightGoal'))], ['Sex', display(read('sex'))],
+            ['Current weight', weight(read('currentWeightKg'))], ['Target weight', weight(read('targetWeightKg'))]
+          ] },
+          activity: { title: 'Activity Level', href: 'activity-level.html', edit: 'Edit activity level', rows: [['Activity level', display(read('activityLevel'))]] },
+          dietary: { title: 'Dietary Preferences', href: 'diet-type.html', edit: 'Edit dietary preferences', rows: [['Diet type', display(read('diet'))], ['Allergies', allergies]] }
+        };
+      }
+      for (const card of document.querySelectorAll('.profile-card[data-section]')) {
+        card.addEventListener('click', () => {
+          const section = profileSections()[card.dataset.section];
+          title.textContent = section.title;
+          editLink.href = section.href;
+          editLink.textContent = section.edit;
+          details.replaceChildren();
+          for (const [label, value] of section.rows) {
+            const row = document.createElement('div');
+            row.className = 'detail-row';
+            const term = document.createElement('dt');
+            const description = document.createElement('dd');
+            term.textContent = label;
+            description.textContent = value;
+            row.append(term, description);
+            details.append(row);
+          }
+          dialog.showModal();
+        });
+      }
+      document.querySelector('.close-button').addEventListener('click', () => dialog.close());
+    </script>
+  </body>
+</html>

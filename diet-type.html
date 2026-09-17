@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>Choose your diet | CalorieHub</title>
+    <style>
+      :root {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #252525;
+        background: #fff;
+        font-synthesis: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button, input { font: inherit; }
+      .diet-page {
+        width: 100%;
+        max-width: 215px;
+        min-height: 468px;
+        margin-inline: auto;
+        padding: 22px 9px 31px 6px;
+        display: flex;
+        flex-direction: column;
+      }
+      .page-header {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 42px;
+        flex-shrink: 0;
+      }
+      .back-button {
+        position: absolute;
+        left: -7px;
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 42px;
+        border-radius: 10px;
+      }
+      .progress { display: flex; gap: 4px; }
+      .progress span { width: 9px; height: 9px; border-radius: 50%; background: #d9d9d9; }
+      .progress .active { background: #080808; }
+      .diet-form { display: flex; flex-direction: column; flex: 1; }
+      h1 { margin: 0; text-align: center; font-size: 13px; line-height: 16px; font-weight: 700; }
+      .description { margin: 2px 0 0; color: #858585; text-align: center; font-size: 9px; line-height: 13px; }
+      .diet-options { display: grid; gap: 9px; margin: 15px 2px 0; padding: 0; border: 0; min-width: 0; }
+      .diet-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 31px;
+        padding: 7px 11px 7px 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 11px;
+        line-height: 15px;
+        cursor: pointer;
+      }
+      .diet-option:has(input:checked) { background: #f8f8f8; }
+      .diet-option input {
+        appearance: none;
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        border: 1px solid #b5b5b5;
+        border-radius: 50%;
+        background: #fff;
+        cursor: pointer;
+      }
+      .diet-option input:checked { background: #6a6a6a; box-shadow: inset 0 0 0 1px #fff; }
+      .form-footer { margin-top: auto; padding-top: 32px; }
+      .status { margin: 0 3px 12px; font-size: 12px; line-height: 18px; text-align: center; }
+      .status:empty { display: none; }
+      .next-button {
+        width: 100%;
+        min-height: 28px;
+        padding: 6px 14px;
+        border: 0;
+        border-radius: 12px;
+        background: #171717;
+        color: #fff;
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .next-button:disabled { background: #e3e3e3; color: #252525; cursor: default; }
+      :is(input, .back-button, .next-button):focus-visible { outline: 2px solid #222; outline-offset: 3px; }
+      @media (max-width: 480px) {
+        .diet-page {
+          min-height: 100vh;
+          min-height: 100dvh;
+          padding-top: max(22px, env(safe-area-inset-top));
+          padding-bottom: max(31px, env(safe-area-inset-bottom));
+        }
+      }
+      @media (hover: hover) {
+        .back-button:hover, .diet-option:hover { background: #f6f6f6; }
+        .next-button:not(:disabled):hover { background: #333; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="diet-page">
+      <header class="page-header">
+        <a class="back-button" href="activity-level.html" aria-label="Back to activity level">
+          <img src="icons/chevron_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="20" height="20">
+        </a>
+        <div class="progress" role="img" aria-label="Step 6 of 7">
+          <span></span><span></span><span></span><span></span><span></span><span class="active"></span><span></span>
+        </div>
+      </header>
+      <form class="diet-form">
+        <h1 id="diet-heading">Choose your diet</h1>
+        <p class="description" id="diet-description">Select the eating style that fits your needs.</p>
+        <fieldset class="diet-options" aria-labelledby="diet-heading" aria-describedby="diet-description">
+          <label class="diet-option"><span>Balanced</span><input type="radio" name="diet" value="balanced" checked required></label>
+          <label class="diet-option"><span>Low Carb</span><input type="radio" name="diet" value="low-carb"></label>
+          <label class="diet-option"><span>High Protein</span><input type="radio" name="diet" value="high-protein"></label>
+          <label class="diet-option"><span>Vegetarian</span><input type="radio" name="diet" value="vegetarian"></label>
+          <label class="diet-option"><span>Keto</span><input type="radio" name="diet" value="keto"></label>
+        </fieldset>
+        <footer class="form-footer">
+          <p class="status" role="status" aria-live="polite"></p>
+          <button class="next-button" type="submit">Next</button>
+        </footer>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector('.diet-form');
+      const status = document.querySelector('.status');
+      const storageKey = 'caloriehub.diet';
+
+      try {
+        const savedDiet = localStorage.getItem(storageKey);
+        const savedOption = Array.from(form.elements.diet).find(option => option.value === savedDiet);
+        if (savedOption) savedOption.checked = true;
+      } catch { /* Keep the default when browser storage is unavailable. */ }
+
+      form.addEventListener('change', () => { status.textContent = ''; });
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+        const diet = form.elements.diet.value;
+        let saved = false;
+        try {
+          localStorage.setItem(storageKey, diet);
+          saved = true;
+        } catch { /* The continuation event still carries the selection. */ }
+        form.dispatchEvent(new CustomEvent('diet:continue', { bubbles: true, detail: { diet } }));
+        status.textContent = saved ? 'Your diet has been saved.' : 'Your diet has been selected.';
+        window.location.href = 'allergy.html';
+      });
+    </script>
+  </body>
+</html>
